@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 JSONのみを返し、他のテキストは含めないでください。`
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-1.5-flash',
       contents: [
         {
           parts: [
