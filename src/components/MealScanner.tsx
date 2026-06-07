@@ -27,6 +27,7 @@ export default function MealScanner({ onMealAdded }: MealScannerProps) {
   const [mealType, setMealType] = useState<MealType>('lunch')
   const [imageFile, setImageFile] = useState<File | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const albumRef = useRef<HTMLInputElement>(null)
 
   const handleImage = async (file: File) => {
     setImageFile(file)
@@ -145,13 +146,22 @@ export default function MealScanner({ onMealAdded }: MealScannerProps) {
 
             {/* 画像選択エリア */}
             {!preview ? (
-              <button
-                onClick={() => inputRef.current?.click()}
-                className="w-full h-48 border-2 border-dashed border-cyan-500/40 rounded-2xl flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-cyan-500 transition-all"
-              >
-                <span className="text-4xl">📷</span>
-                <span className="text-sm">写真を撮る / 選ぶ</span>
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={() => inputRef.current?.click()}
+                  className="w-full h-32 border-2 border-dashed border-cyan-500/40 rounded-2xl flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-cyan-500 transition-all"
+                >
+                  <span className="text-3xl">📷</span>
+                  <span className="text-sm">カメラで撮る</span>
+                </button>
+                <button
+                  onClick={() => albumRef.current?.click()}
+                  className="w-full h-20 border-2 border-dashed border-purple-500/40 rounded-2xl flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-purple-500 transition-all"
+                >
+                  <span className="text-2xl">🖼️</span>
+                  <span className="text-sm">アルバムから選ぶ</span>
+                </button>
+              </div>
             ) : (
               <div className="relative w-full h-48 rounded-2xl overflow-hidden mb-4">
                 <img src={preview} alt="meal" className="w-full h-full object-cover" />
@@ -163,28 +173,46 @@ export default function MealScanner({ onMealAdded }: MealScannerProps) {
                     </div>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => {
-                      setPreview(null)
-                      setResult(null)
-                      setImageFile(null)
-                      setTimeout(() => inputRef.current?.click(), 100)
-                    }}
-                    className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-lg"
-                  >
-                    📷 撮り直す
-                  </button>
+                  <div className="absolute top-2 right-2 flex gap-1">
+                    <button
+                      onClick={() => {
+                        setPreview(null); setResult(null); setImageFile(null)
+                        setTimeout(() => inputRef.current?.click(), 100)
+                      }}
+                      className="bg-black/60 text-white text-xs px-2 py-1 rounded-lg"
+                    >
+                      📷 撮り直す
+                    </button>
+                    <button
+                      onClick={() => {
+                        setPreview(null); setResult(null); setImageFile(null)
+                        setTimeout(() => albumRef.current?.click(), 100)
+                      }}
+                      className="bg-black/60 text-white text-xs px-2 py-1 rounded-lg"
+                    >
+                      🖼️ 選び直す
+                    </button>
+                  </div>
                 )}
               </div>
             )}
 
+            {/* カメラ専用 */}
             <input
               ref={inputRef}
               type="file"
               accept="image/*"
               capture="environment"
               className="hidden"
-              onChange={(e) => e.target.files?.[0] && handleImage(e.target.files[0])}
+              onChange={(e) => { if (e.target.files?.[0]) { handleImage(e.target.files[0]); e.target.value = '' } }}
+            />
+            {/* アルバム専用（captureなし） */}
+            <input
+              ref={albumRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => { if (e.target.files?.[0]) { handleImage(e.target.files[0]); e.target.value = '' } }}
             />
 
             {/* 分析結果 */}
