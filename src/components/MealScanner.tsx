@@ -168,17 +168,27 @@ export default function MealScanner({ onMealAdded }: MealScannerProps) {
               <div className="mt-4 bg-gray-800 rounded-2xl p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-xs bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded-full">Gemini Vision</span>
-                  <span className="text-sm font-semibold text-white">{result.name}</span>
+                  <input
+                    className="flex-1 text-sm font-semibold text-white bg-transparent border-b border-gray-600 focus:border-cyan-400 outline-none"
+                    value={result.name}
+                    onChange={(e) => setResult({ ...result, name: e.target.value })}
+                  />
                 </div>
+                <p className="text-xs text-gray-500 mb-2">✏️ 数値をタップして修正できるで</p>
                 <div className="grid grid-cols-4 gap-2 text-center">
                   {[
-                    { label: 'kcal', value: result.calories, color: 'text-yellow-400' },
-                    { label: 'P(g)', value: result.protein_g, color: 'text-cyan-400' },
-                    { label: 'F(g)', value: result.fat_g, color: 'text-purple-400' },
-                    { label: 'C(g)', value: result.carbs_g, color: 'text-orange-400' },
-                  ].map(({ label, value, color }) => (
+                    { label: 'kcal', key: 'calories' as const, color: 'text-yellow-400' },
+                    { label: 'P(g)', key: 'protein_g' as const, color: 'text-cyan-400' },
+                    { label: 'F(g)', key: 'fat_g' as const, color: 'text-purple-400' },
+                    { label: 'C(g)', key: 'carbs_g' as const, color: 'text-orange-400' },
+                  ].map(({ label, key, color }) => (
                     <div key={label} className="bg-gray-700/50 rounded-xl p-2">
-                      <p className={`text-lg font-bold ${color}`}>{Math.round(value)}</p>
+                      <input
+                        type="number"
+                        className={`w-full text-lg font-bold ${color} bg-transparent text-center outline-none focus:bg-gray-600/50 rounded`}
+                        value={Math.round(result[key])}
+                        onChange={(e) => setResult({ ...result, [key]: Number(e.target.value) })}
+                      />
                       <p className="text-xs text-gray-400">{label}</p>
                     </div>
                   ))}
