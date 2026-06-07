@@ -1,7 +1,7 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 import { NextRequest, NextResponse } from 'next/server'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,8 +15,6 @@ export async function POST(request: NextRequest) {
     const bytes = await image.arrayBuffer()
     const base64 = Buffer.from(bytes).toString('base64')
     const mimeType = image.type
-
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
 
     const prompt = `この写真に写っている食べ物または飲み物を分析して、栄養情報をJSON形式で返してください。
 
@@ -39,24 +37,25 @@ export async function POST(request: NextRequest) {
 
 JSONのみを返し、他のテキストは含めないでください。`
 
-    const result = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          data: base64,
-          mimeType,
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: [
+        {
+          parts: [
+            { text: prompt },
+            { inlineData: { mimeType, data: base64 } },
+          ],
         },
-      },
-    ])
+      ],
+    })
 
-    const text = result.response.text().trim()
+    const text = response.text?.trim() ?? ''
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) {
-      throw new Error('Invalid response from Gemini')
+      throw new Error('Invalid response from Gemini: ' + text)
     }
 
     const parsed = JSON.parse(jsonMatch[0])
-    // nullや非数値をフォールバック
     const data = {
       name: parsed.name || '不明な食品',
       calories: Number(parsed.calories) || 0,
