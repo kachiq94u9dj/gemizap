@@ -111,7 +111,12 @@ export default function MealScanner({ onMealAdded }: MealScannerProps) {
           <div className="w-full max-w-md bg-gray-900 border border-cyan-500/30 rounded-t-3xl p-6 pb-10">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-cyan-400">AI食事スキャン</h3>
-              <button onClick={() => setOpen(false)} className="text-gray-400 text-xl">✕</button>
+              <button onClick={() => {
+                setOpen(false)
+                setPreview(null)
+                setResult(null)
+                setImageFile(null)
+              }} className="text-gray-400 text-xl">✕</button>
             </div>
 
             {/* 食事タイプ選択 */}
@@ -143,13 +148,25 @@ export default function MealScanner({ onMealAdded }: MealScannerProps) {
             ) : (
               <div className="relative w-full h-48 rounded-2xl overflow-hidden mb-4">
                 <img src={preview} alt="meal" className="w-full h-full object-cover" />
-                {analyzing && (
+                {analyzing ? (
                   <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
                     <div className="text-cyan-400 text-center">
                       <div className="text-2xl mb-2 animate-spin">⚡</div>
                       <p className="text-sm">Gemini AIで分析中...</p>
                     </div>
                   </div>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setPreview(null)
+                      setResult(null)
+                      setImageFile(null)
+                      setTimeout(() => inputRef.current?.click(), 100)
+                    }}
+                    className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-lg"
+                  >
+                    📷 撮り直す
+                  </button>
                 )}
               </div>
             )}
