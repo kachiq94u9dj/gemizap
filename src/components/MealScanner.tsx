@@ -41,7 +41,7 @@ export default function MealScanner({ onMealAdded }: MealScannerProps) {
       const res = await fetch('/api/analyze-meal', { method: 'POST', body: formData })
       const data = await res.json()
       if (!res.ok || data.error) {
-        alert('AI分析に失敗したで😢\n数値を手動で入力してな。')
+        alert(`AI分析に失敗したで😢\n${data.detail || ''}\n数値を手動で入力してな。`)
         // エラーでも手動入力できるようにデフォルト値をセット
         setResult({ name: '', calories: 0, protein_g: 0, fat_g: 0, carbs_g: 0, description: '' })
       } else {

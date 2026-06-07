@@ -67,7 +67,8 @@ JSONのみを返し、他のテキストは含めないでください。`
     }
     return NextResponse.json(data)
   } catch (error) {
-    console.error('Meal analysis error:', error)
-    return NextResponse.json({ error: 'Failed to analyze meal' }, { status: 500 })
+    const message = error instanceof Error ? error.message : String(error)
+    console.error('Meal analysis error:', message)
+    return NextResponse.json({ error: 'Failed to analyze meal', detail: message }, { status: 500 })
   }
 }
