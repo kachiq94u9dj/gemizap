@@ -1,10 +1,7 @@
 import { GoogleGenAI } from '@google/genai'
 import { NextRequest, NextResponse } from 'next/server'
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY!,
-  httpOptions: { apiVersion: 'v1' }
-})
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,7 +38,7 @@ export async function POST(request: NextRequest) {
 JSONのみを返し、他のテキストは含めないでください。`
 
     const response = await ai.models.generateContent({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash',
       contents: [
         {
           parts: [
