@@ -52,24 +52,28 @@ export default function WeeklyChart({ targetCalories }: { targetCalories: number
         <h2 className="text-sm font-semibold text-yellow-400">週間カロリートレンド</h2>
         <span className="text-xs text-gray-500">目標: {Math.round(targetCalories)}kcal</span>
       </div>
-      <div className="flex items-end gap-1.5 h-20">
+      <div style={{ display: 'flex', gap: 6, alignItems: 'flex-end' }}>
         {days.map((d) => {
-          const h = Math.max((d.calories / maxCal) * 72, 2)
-          const overTarget = d.calories > targetCalories
+          const barHeight = Math.max((d.calories / maxCal) * 64, 2)
+          const over = d.calories > targetCalories
           return (
-            <div key={d.date} className="flex-1 flex flex-col items-center gap-1">
+            <div key={d.date} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
               <div
-                className="w-full rounded-t-sm transition-all"
                 style={{
-                  height: `${h}px`,
-                  background: overTarget
-                    ? 'linear-gradient(to top, #ff4444, #ff6666)'
-                    : 'linear-gradient(to top, #00e5ff, #0099cc)',
-                  boxShadow: overTarget ? '0 0 4px #ff4444' : '0 0 4px #00e5ff',
+                  width: '100%',
+                  height: barHeight,
+                  background: over ? 'linear-gradient(to top, #ff4444, #ff6666)' : 'linear-gradient(to top, #00e5ff, #0099cc)',
+                  boxShadow: over ? '0 0 4px #ff4444' : '0 0 4px #00e5ff',
                   opacity: d.calories === 0 ? 0.2 : 1,
+                  borderRadius: '3px 3px 0 0',
                 }}
               />
-              <span className="text-xs text-gray-500">{d.label}</span>
+              <span style={{ fontSize: 11, color: '#9ca3af' }}>{d.label}</span>
+              {d.calories > 0 && (
+                <span style={{ fontSize: 11, fontWeight: 700, color: over ? '#ff6666' : '#00e5ff' }}>
+                  {d.calories >= 1000 ? `${Math.round(d.calories / 100) / 10}k` : d.calories}
+                </span>
+              )}
             </div>
           )
         })}
